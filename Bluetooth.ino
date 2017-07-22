@@ -1,12 +1,33 @@
-#include "Arduino.h"
-//The setup function is called once at startup of the sketch
+
+#include <Arduino.h>
+#include <SoftwareSerial.h>
+
+SoftwareSerial Bluetooth(10, 11); // RX | TX
+
 void setup()
 {
-// Add your initialization code here
-}
 
-// The loop function is called in an endless loop
+  Serial.begin(9600);
+  Bluetooth.begin(9600);  //Default Baud for comm, it may be different for your Module.
+  Serial.println("The bluetooth gates are open.\n Connect to HC-05 from any other bluetooth device with 1234 as pairing key!.");
+  Serial3.begin(9600);   // serial port 3
+}
+    byte rxByte;
 void loop()
 {
-//Add your repeated code here
+
+  // Feed any data from bluetooth to Terminal.
+    if (Bluetooth.available()){
+        rxByte = Bluetooth.read();
+        Serial.write(rxByte);
+        Serial3.write(rxByte);
+    }
+
+
+  // Feed all data from termial to bluetooth
+    if (Serial.available()){
+        rxByte = Serial.read();
+        Bluetooth.write(rxByte);
+
+    }
 }
