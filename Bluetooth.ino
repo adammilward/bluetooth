@@ -1,33 +1,60 @@
+// Basic Bluetooth sketch HC-06_01
+// Connect the Hc-06 module and communicate using the serial monitor
+//
+// The HC-06 defaults to AT mode when first powered on.
+// The default baud rate is 9600
+// The Hc-06 requires all AT commands to be in uppercase. NL+CR should not be added to the command string
+//
 
 #include <Arduino.h>
 #include <SoftwareSerial.h>
+#include "Config.h"
+#include "VoltMeter.h"
 
-SoftwareSerial Bluetooth(10, 11); // RX | TX
+SoftwareSerial BTserial(CONFIG::BT_RX, CONFIG::BT_TX); // RX | TX
+// Connect the HC-05 TX to the Arduino RX on pin 12.
+// Connect the HC-05 RX to the Arduino TX on pin 3 through a voltage divider.
+VoltMeter Meter;
+
+unsigned long waitMillis = millis() + 1000;
+int delayTime = 1;
+int count = 0;
 
 void setup()
 {
+    Serial.begin(9600);
+    Serial.println("Enter AT commands:");
 
-  Serial.begin(9600);
-  Bluetooth.begin(9600);  //Default Baud for comm, it may be different for your Module.
-  Serial.println("The bluetooth gates are open.\n Connect to HC-05 from any other bluetooth device with 1234 as pairing key!.");
-  Serial3.begin(9600);   // serial port 3
+    // HC-05 default serial speed is 9600
+    BTserial.begin(9600);
+    BTserial.write("ready to receive");
 }
-    byte rxByte;
+
 void loop()
 {
 
-  // Feed any data from bluetooth to Terminal.
-    if (Bluetooth.available()){
-        rxByte = Bluetooth.read();
-        Serial.write(rxByte);
-        Serial3.write(rxByte);
+    if ((long) (millis() - waitMillis) >= 0) {
+        count++;
+        if (count >100) {
+            count = 0;
+            delayTime *= 10;
+            Serial.println(0);
+        }
+        waitMillis = millis() + delayTime;
+        Meter.serialOutAll();
+    }
+    //Meter.serialOutAll();
+    // Keep reading from HC-06 and send to Arduino Serial Monitor
+    if (BTserial.available())
+    {
+        Serial.write("we have bluetoth reeption");
+        Serial.write(BTserial.read());
     }
 
-
-  // Feed all data from termial to bluetooth
-    if (Serial.available()){
-        rxByte = Serial.read();
-        Bluetooth.write(rxByte);
-
+    // Keep reading from Arduino Serial Monitor and send to HC-06
+    if (Serial.available())
+    {
+        BTserial.write(Serial.read());
     }
+
 }
