@@ -17,7 +17,7 @@ SoftwareSerial BTserial(CONFIG::BT_RX, CONFIG::BT_TX); // RX | TX
 VoltMeter Meter;
 
 unsigned long waitMillis = millis() + 1000;
-int delayTime = 1;
+int delayTime = 500;
 int count = 0;
 
 void setup()
@@ -33,28 +33,52 @@ void setup()
 void loop()
 {
 
-    if ((long) (millis() - waitMillis) >= 0) {
-        count++;
-        if (count >100) {
-            count = 0;
-            delayTime *= 10;
-            Serial.println(0);
-        }
+    /*if ((long) (millis() - waitMillis) >= 0) {
+
         waitMillis = millis() + delayTime;
         Meter.serialOutAll();
-    }
-    //Meter.serialOutAll();
-    // Keep reading from HC-06 and send to Arduino Serial Monitor
-    if (BTserial.available())
+    }*/
+
+    while (BTserial.available())
     {
+        char c = BTserial.read();
         Serial.write("we have bluetoth reeption");
-        Serial.write(BTserial.read());
+        Serial.write(c);
     }
 
+
     // Keep reading from Arduino Serial Monitor and send to HC-06
-    if (Serial.available())
+    while (Serial.available())
     {
-        BTserial.write(Serial.read());
+
+        String command = Serial.readStringUntil('\n');
+        writeWord(command);
     }
+
+}
+
+
+void writeWord(String data) {
+    int wordIndex = 0;
+    String command[5] ;
+    data.trim();
+
+    int charIndex = data.indexOf(' ');
+    while (charIndex > -1) {
+        command[wordIndex] = data.substring(0, charIndex);
+        data.remove(0, charIndex + 1);
+        data.trim();
+        wordIndex++;
+        charIndex = data.indexOf(' ');
+    }
+    command[wordIndex] = data;
+
+        Serial.println(command[0]);
+        Serial.println(command[1]);
+        Serial.println(command[2]);
+        Serial.println(command[3]);
+        Serial.println(command[4]);
+
+
 
 }
