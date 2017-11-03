@@ -10,11 +10,14 @@
 #include <SoftwareSerial.h>
 #include "Config.h"
 #include "VoltMeter.h"
+#include "Output.h"
 
 SoftwareSerial BTserial(CONFIG::BT_RX, CONFIG::BT_TX); // RX | TX
 // Connect the HC-05 TX to the Arduino RX on pin 12.
 // Connect the HC-05 RX to the Arduino TX on pin 3 through a voltage divider.
 VoltMeter Meter;
+
+
 
 unsigned long waitMillis = millis() + 1000;
 int delayTime = 500;
@@ -28,6 +31,11 @@ void setup()
     // HC-05 default serial speed is 9600
     BTserial.begin(9600);
     BTserial.write("ready to receive");
+
+    String name = "output object";
+    Serial.println("example of string: ");
+    Serial.println(name);
+    Output Output(1);
 }
 
 void loop()
@@ -55,6 +63,8 @@ void loop()
         writeWord(command);
     }
 
+
+
 }
 
 
@@ -78,7 +88,9 @@ void writeWord(String data) {
         Serial.println(command[2]);
         Serial.println(command[3]);
         Serial.println(command[4]);
-
-
-
+        BTserial.println(command[0]);
+        BTserial.println(command[1]);
+        BTserial.println(command[2]);
+        BTserial.println(command[3]);
+        BTserial.println(command[4]);
 }
