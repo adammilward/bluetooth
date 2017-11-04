@@ -21,6 +21,8 @@ public:
 
     static const byte BT_RX = 12;
     static const byte BT_TX = 13;
+    static const byte COMMAND_LENGTH = 4;
+
 
   /*static constexpr float A0_FACTOR = 0.026084756;
     static constexpr float A1_FACTOR = 0.014804804;

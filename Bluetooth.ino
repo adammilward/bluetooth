@@ -20,7 +20,7 @@ VoltMeter Meter;
 
 
 unsigned long waitMillis = millis() + 1000;
-int delayTime = 500;
+int delayTime = 2000;
 int count = 0;
 
 void setup()
@@ -41,7 +41,7 @@ void setup()
 void loop()
 {
 
-    /*if ((long) (millis() - waitMillis) >= 0) {
+/*    if ((long) (millis() - waitMillis) >= 0) {
 
         waitMillis = millis() + delayTime;
         Meter.serialOutAll();
@@ -70,7 +70,7 @@ void loop()
 
 void writeWord(String data) {
     int wordIndex = 0;
-    String command[5] ;
+    String command[CONFIG::COMMAND_LENGTH] ;
     data.trim();
 
     int charIndex = data.indexOf(' ');
